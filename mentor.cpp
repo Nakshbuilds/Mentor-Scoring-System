@@ -118,7 +118,7 @@ void readInteractions(string interactions, vector<Interactions>& interactions1){
 }
     file.close();
 }
-void loadStepTwo(string feedbacks, std::vector<Interactions>& interactions1) {
+void feedbacks(string feedbacks, std::vector<Interactions>& interactions1) {
     std::ifstream file(feedbacks);
     std::string line, cell, currentIDm, currentIDs;
     std::getline(file, line); // Skip header
@@ -204,5 +204,22 @@ void sortMentors(vector<Mentor>& mentors) { // Manual selection sort
 }
 
 
+//To write final CSV
+void saveResults(const vector<Mentor>& mentors, const string& mentor_scores) {
+    std::ofstream outFile(mentor_scores); // 1. Create/Open the output file
+
+    // 2. Write the Header Row so the CSV is readable
+    outFile << "Rank,MentorID,Name,Final Score" << std::endl;
+
+    // 3. Loop through the sorted vector and write each mentor's data
+    for (const auto& m : mentors) {
+        outFile << m.rank << "," 
+                << m.mentorID << "," 
+                << m.name << "," 
+                << m.Finalscore << std::endl;
+    }
+
+    outFile.close(); // 4. Save and close
+}
 
 

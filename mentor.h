@@ -39,19 +39,20 @@ struct Interactions{
     int feedback;
 };
 
-double calculateP(int completedPoints, int totalPoints);
-double calculateR(double tavg);
-double calculateE(int meetings, int codereviews, int interactions, int students);
-double calculateF(int feedback, int students);
+void readStudents(std::string filename, std::vector<Student>& students1);
+void readMentors(std::string filename, std::vector<Mentor>& mentors1);
+void readInteractions(std::string filename, std::vector<Interactions>& interactions1);
+void feedbacks(string filename, std::vector<Interactions>& interactions1);
+
+// double calculateP(int completedPoints, int totalPoints);
+// double calculateR(double tavg);
+// double calculateE(int meetings, int codereviews, int interactions, int students);
+// double calculateF(int feedback, int students);
 
 
 void calculateScores(vector<Mentor>& mentors, const vector<Student>& students, const vector<Interactions>& interactions);
 void sortMentors(vector<Mentor>& mentors);
-void saveResults(const vector<Mentor>& mentors, const string& filename);
-
-
-
-
+void saveResults(const vector<Mentor>& mentors, const string& mentor_scores);
 
 
 #endif
