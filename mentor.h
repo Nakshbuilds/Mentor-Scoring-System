@@ -26,6 +26,7 @@ struct Mentor{
     double E = 0.0;
     double F = 0.0;
     double Finalscore = 0.0;
+    int rank = 0;
 };
 
 struct Interactions{
@@ -44,7 +45,9 @@ double calculateE(int meetings, int codereviews, int interactions, int students)
 double calculateF(int feedback, int students);
 
 
-
+void calculateScores(vector<Mentor>& mentors, const vector<Student>& students, const vector<Interactions>& interactions);
+void sortMentors(vector<Mentor>& mentors);
+void saveResults(const vector<Mentor>& mentors, const string& filename);
 
 
 
