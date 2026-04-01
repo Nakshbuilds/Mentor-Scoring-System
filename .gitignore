@@ -1,0 +1,12 @@
+# Ignore the compiled executable program
+mentor_system
+mentor_system.exe
+
+# Ignore temporary object files created during build
+*.o
+
+# Ignore VS Code specific settings folders
+.vscode/
+
+# Ignore the output CSV so you don't upload results to the code repo
+mentor_scores.csv
