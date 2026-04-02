@@ -222,6 +222,12 @@ void sortMentors(vector<Mentor>& mentors) { // Built-in sort using library-algor
 void saveResults(const vector<Mentor>& mentors, const string& mentor_scores) {
     std::ofstream outFile(mentor_scores); // 1. Create/Open the output file
 
+    // Check if the file opened successfully
+    if (!outFile.is_open()) {
+        std::cerr << "Error: Could not create output file " << mentor_scores << std::endl;
+        return;
+    }
+
     // 2. Write the Header Row so the CSV is readable
     outFile << "Rank,MentorID,Name,Final Score" << std::endl;
 
@@ -234,6 +240,7 @@ void saveResults(const vector<Mentor>& mentors, const string& mentor_scores) {
     }
 
     outFile.close(); // 4. Save and close
+    std::cout << "Success: Results saved to " << mentor_scores << std::endl;
 }
 
 
