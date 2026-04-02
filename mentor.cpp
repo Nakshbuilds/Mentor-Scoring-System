@@ -159,7 +159,7 @@ void calculateScores(vector<Mentor>& mentors, const vector<Student>& students, c
 
     for (auto& m : mentors) {
         double totalMilestones = 0, completedMilestones = 0;        // Initialize all the components to 0.
-        double totalResponseTime = 0, interactionCount = 0;
+        double totalResponseTime = 0;
         double engagementSum = 0, feedbackSum = 0;
         int menteeCount = 0;
 
