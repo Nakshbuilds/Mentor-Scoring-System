@@ -5,7 +5,8 @@
 #include<vector> // To use dynamic array
 #include<string> // To be able to handle strings
 #include<cmath> // For complex math equations
-#include<unordered_map>
+#include<unordered_map> // For calculating the score
+#include <algorithm> // Required for std::sort
 
 using namespace std;
 
@@ -95,6 +96,7 @@ void readInteractions(string interactions, vector<Interactions>& interactions1){
     getline(file,line);
 
     while(getline(file, line)){
+        if (line.empty()) continue; // Skip empty lines
         stringstream ss(line);
         string cell;
         Interactions tmp;
@@ -112,8 +114,13 @@ void readInteractions(string interactions, vector<Interactions>& interactions1){
          getline(ss, cell, ',');
         tmp.message = stoi(cell);
 
-         getline(ss, cell, ',');
+        getline(ss, cell); // Read remaining line for tavg
+    
+    try {
         tmp.tavg = stod(cell);
+    } catch (...) {
+        tmp.tavg = 0.0; // Fallback for malformed data
+    }
 
         interactions1.push_back(tmp);
 }
@@ -198,19 +205,16 @@ void calculateScores(vector<Mentor>& mentors, const vector<Student>& students, c
     }
 }
 
-void sortMentors(vector<Mentor>& mentors) { // Manual selection sort
-    int n = mentors.size();
-    for(int i = 0; i < n-1 ; i++){
-        int max = i;
-        for(int j = i+1; j < n ; j++){
-        if(mentors[max].Finalscore < mentors[j].Finalscore)
-        max = j;
-        }
-        Mentor tmp = mentors[max];
-        mentors[max] = mentors[i];
-        mentors[i] = tmp;
+void sortMentors(vector<Mentor>& mentors) { // Built-in sort using library-algorithm.
+    // Uses Introsort (combination of QuickSort, HeapSort, and InsertionSort)
+    std::sort(mentors.begin(), mentors.end(), [](const Mentor& a, const Mentor& b) {
+        return a.Finalscore > b.Finalscore; // Descending order
+    });
+
+    // Assign Ranks
+    for (size_t i = 0; i < mentors.size(); i++) {
+        mentors[i].rank = i + 1;
     }
-    for (int i = 0; i < n; i++) mentors[i].rank = i + 1;
 }
 
 

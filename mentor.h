@@ -4,21 +4,19 @@
 #include <string>
 #include <vector>
 
-using namespace std;
-
 struct Student{
-    string studentID;
-    string name;
-    string projectID;
+    std::string studentID;
+    std:: string name;
+    std::string projectID;
     int milestonesCompleted;
     int totalMilestones;
 };
 
 struct Mentor{
-    string mentorID;
-    string name;
-    string domain;
-    vector <string>projectIDs ;
+    std::string mentorID;
+    std::string name;
+    std::string domain;
+    std::vector <string>projectIDs ;
 
     //Scores for mentors initialized to 0
     double P = 0.0;
@@ -30,8 +28,8 @@ struct Mentor{
 };
 
 struct Interactions{
-    string mentorID;
-    string studentID;
+    std::string mentorID;
+    std::string studentID;
     int meetings;
     int codeReview;
     int message;
@@ -53,6 +51,5 @@ void feedbacks(string filename, std::vector<Interactions>& interactions1);
 void calculateScores(vector<Mentor>& mentors, const vector<Student>& students, const vector<Interactions>& interactions);
 void sortMentors(vector<Mentor>& mentors);
 void saveResults(const vector<Mentor>& mentors, const string& mentor_scores);
-
 
 #endif
