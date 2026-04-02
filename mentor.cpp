@@ -3,8 +3,9 @@
 #include<fstream> // To read and write csv files
 #include<sstream> // To read the file by breaking at comma
 #include<vector> // To use dynamic array
-#include<string>
-#include<cmath>
+#include<string> // To be able to handle strings
+#include<cmath> // For complex math equations
+#include<unordered_map>
 
 using namespace std;
 
@@ -143,51 +144,55 @@ void feedbacks(string feedbacks, std::vector<Interactions>& interactions1) {
 //First function
 
 void calculateScores(vector<Mentor>& mentors, const vector<Student>& students, const vector<Interactions>& interactions) {
+    // 1. Create a Lookup Table for students: O(S)
+    unordered_map<string, const Student*> studentMap;
+    for (const auto& s : students) {
+        studentMap[s.studentID] = &s;
+    }
+
     for (auto& m : mentors) {
-        double totalMilestones = 0, completedMilestones = 0;      // Initialize all the components to 0.
+        double totalMilestones = 0, completedMilestones = 0;        // Initialize all the components to 0.
         double totalResponseTime = 0, interactionCount = 0;
-        double engagementSum = 0, feedback = 0;
+        double engagementSum = 0, feedbackSum = 0;
         int menteeCount = 0;
 
         for (const auto& i : interactions) {
             if (i.mentorID == m.mentorID) {
                 menteeCount++;
                 totalResponseTime += i.tavg;
-                int x = 1;
-                int t = (1.5 * i.meetings) + (1.5 * i.codeReview) + (0.5  * i.message);    // Calculating engagement sum
-                engagementSum += t; 
-                if(t < 15 && i.feedback >=4) x = 0;       // Trying to remove extreme cases biasness.
-                else if(t > 45 && i.feedback <=2) x = 0;   
-
-                feedback += x * i.feedback;
                 
-                // Find matching student progress
-                for (const auto& s : students) {
-                    if (s.studentID == i.studentID) {
-                        int n = s.milestonesCompleted;
-                        int m = s.totalMilestones;
-                        completedMilestones += n*(n + 1)/2;
-                        totalMilestones += m*(m + 1)/2;
-                    }
+                double engagementScore = (1.5 * i.meetings) + (1.5 * i.codeReview) + (0.5 * i.message);
+                engagementSum += engagementScore;
+
+                // Bias correction logic
+                int multiplier = 1;
+                if ((engagementScore < 15 && i.feedback >= 4) || (engagementScore > 45 && i.feedback <= 2)) {  
+                    multiplier = 0;     // Trying to remove extreme cases biasness.
+                }
+                feedbackSum += multiplier * i.feedback;
+
+                // 2. Optimized Student Lookup: O(1) instead of O(S)
+                if (studentMap.count(i.studentID)) {
+                    const Student* s = studentMap[i.studentID];
+                    double n = s->milestonesCompleted;
+                    double total = s->totalMilestones;
+                    completedMilestones += n * (n + 1) / 2.0;
+                    totalMilestones += total * (total + 1) / 2.0;
                 }
             }
         }
-       // 1. Progress Score (P)
-        m.P = (totalMilestones > 0) ? (completedMilestones / totalMilestones) : 0;  
 
-        // 2. Responsiveness Score (R) using 1/(1+ e^2*(tavg - 2)). 2 hours is taken as adequate response time.
-        if (menteeCount > 0) {
-            double avgT = totalResponseTime / menteeCount;
-            m.R = 1/(1+ exp(2 *( avgT - 2)));
-
+        // Final Score Calculation
+        m.P = (totalMilestones > 0) ? (completedMilestones / totalMilestones) : 0;    // 1. Progress Score (P)
+        if (menteeCount > 0) {                    
+            // 2. Responsiveness Score (R) using 1/(1+ e^2*(tavg - 2)).2 hours is taken as adequate response time.               
+            double avgT = totalResponseTime / menteeCount; 
+            m.R = 1.0 / (1.0 + exp(2.0 * (avgT - 2.0)));   
             // 3. Engagement Score (E) - Normalized per mentee
             // Assuming a 'high' engagement is 60 points per mentee for 1.0 score
-            m.E = (engagementSum / menteeCount) / 60.0;
-            if (m.E > 1.0) m.E = 1.0;
+            m.E = std::min(1.0, (engagementSum / menteeCount) / 60.0); 
+            m.F = feedbackSum / (5.0 * menteeCount);   //4. Calculating feedback
         }
-        //4. Calculating feedback
-        m.F = feedback/(5 * menteeCount);
-
         //5. Calculating total sum using weighted score
         m.Finalscore = (0.25 * m.P) + (0.25 * m.R) + (0.3 * m.E) + (0.2 * m.F);
     }
