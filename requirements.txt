@@ -1,0 +1,19 @@
+# Compiler Requirements
+g++ (GCC) version 9.0 or higher (supports C++17)
+OR Clang version 5.0 or higher
+
+# Build System
+GNU Make version 3.81 or higher
+
+# Standard Library Dependencies
+- iostream (Standard Input/Output)
+- fstream (File Stream)
+- sstream (String Stream)
+- vector (Dynamic Arrays)
+- string (String handling)
+- cmath (Math functions for exp() and pow())
+- algorithm (For std::sort)
+- unordered_map (For optimized student lookup)
+
+# Operating System
+Compatible with Linux, macOS, and Windows (via MinGW or WSL)

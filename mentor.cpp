@@ -206,14 +206,22 @@ void calculateScores(vector<Mentor>& mentors, const vector<Student>& students, c
 }
 
 void sortMentors(vector<Mentor>& mentors) { // Built-in sort using library-algorithm.
-    // Uses Introsort (combination of QuickSort, HeapSort, and InsertionSort)
+    if (mentors.empty()) return;
+
     std::sort(mentors.begin(), mentors.end(), [](const Mentor& a, const Mentor& b) {
         return a.Finalscore > b.Finalscore; // Descending order
     });
 
-    // Assign Ranks
+    // 2. Assign ranks with tie-handling (1-2-2-4 logic)
+    int currentRank = 1;
     for (size_t i = 0; i < mentors.size(); i++) {
-        mentors[i].rank = i + 1;
+        // If it's not the first mentor AND the score is different from the previous one
+        // The rank becomes the current index + 1 (to skip ranks)
+        if (i > 0 && mentors[i].Finalscore < mentors[i - 1].Finalscore) {
+            currentRank = i + 1;
+        }
+        
+        mentors[i].rank = currentRank;
     }
 }
 
