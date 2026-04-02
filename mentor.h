@@ -16,7 +16,7 @@ struct Mentor{
     std::string mentorID;
     std::string name;
     std::string domain;
-    std::vector <string>projectIDs ;
+    std::vector <std::string>projectIDs ;
 
     //Scores for mentors initialized to 0
     double P = 0.0;
