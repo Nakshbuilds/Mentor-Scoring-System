@@ -153,8 +153,13 @@ void calculateScores(vector<Mentor>& mentors, const vector<Student>& students, c
             if (i.mentorID == m.mentorID) {
                 menteeCount++;
                 totalResponseTime += i.tavg;
-                engagementSum += ((1.5 * i.meetings) + (1.5 * i.codeReview) + i.message);
-                feedback += i.feedback;
+                int x = 1;
+                int t = (1.5 * i.meetings) + (1.5 * i.codeReview) + (0.5  * i.message);    // Calculating engagement sum
+                engagementSum += t; 
+                if(t < 15 && i.feedback >=4) x = 0;       // Trying to remove extreme cases biasness.
+                else if(t > 45 && i.feedback <=2) x = 0;   
+
+                feedback += x * i.feedback;
                 
                 // Find matching student progress
                 for (const auto& s : students) {
@@ -170,14 +175,14 @@ void calculateScores(vector<Mentor>& mentors, const vector<Student>& students, c
        // 1. Progress Score (P)
         m.P = (totalMilestones > 0) ? (completedMilestones / totalMilestones) : 0;  
 
-        // 2. Responsiveness Score (R) using e^(-0.25 * tavg)
+        // 2. Responsiveness Score (R) using 1/(1+ e^2*(tavg - 2)). 2 hours is taken as adequate response time.
         if (menteeCount > 0) {
             double avgT = totalResponseTime / menteeCount;
-            m.R = std::exp(-0.25 * avgT);
+            m.R = 1/(1+ exp(2 *( avgT - 2)));
 
             // 3. Engagement Score (E) - Normalized per mentee
-            // Assuming a 'high' engagement is 50 interactions per mentee for 1.0 score
-            m.E = (engagementSum / menteeCount) / 50.0;
+            // Assuming a 'high' engagement is 60 points per mentee for 1.0 score
+            m.E = (engagementSum / menteeCount) / 60.0;
             if (m.E > 1.0) m.E = 1.0;
         }
         //4. Calculating feedback
